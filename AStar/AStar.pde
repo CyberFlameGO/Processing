@@ -17,7 +17,7 @@ class Tile {
   public Tile(int x, int y) {
     this.x = x;
     this.y = y;
-    this.wall = random(1) < .1;
+    this.wall = random(1) < wallProb;
   }
   
   public void draw() {
@@ -67,9 +67,12 @@ class Tile {
   }
 }
 
-int tileSize;
+// Settings
 int numTiles = 20;
+int fps = 10;
+float wallProb = .1;
 
+int tileSize;
 Tile[][] tiles;
 
 Tile start;
@@ -80,7 +83,7 @@ ArrayList<Tile> openSet = new ArrayList<Tile>();
 
 public void setup() {
   size(400, 400);
-  frameRate(3);
+  frameRate(fps);
   noStroke();
 
   tileSize = floor(width / numTiles);
@@ -118,6 +121,7 @@ public void draw() {
   }
   
   if (current == null) {
+    // TODO Draw the closed path
     return;
   }
   
