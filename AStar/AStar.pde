@@ -25,6 +25,10 @@ class Tile {
     rect(x * tileSize, y * tileSize, tileSize, tileSize);
   }
   
+  public void drawPredef() {    
+    rect(x * tileSize, y * tileSize, tileSize, tileSize);
+  }
+  
   private int getColor() {
     return this.equals(start) || this.equals(end) ? 100 : (wall ? 0 : 255);
   }
@@ -133,25 +137,14 @@ public void draw() {
 }
 
 private void drawPath(ArrayList<Tile> path) {
-  // TODO Fix this drawing algorithm
-  /*noFill();
-  stroke(255, 0, 200);
-  strokeWeight(width / 2);*/
-  
-  // TODO Remove debug
-  //System.out.println(path.size());
-  
-  beginShape();
+  fill(255, 0, 200);
   
   for (Tile tile : path) {
-    vertex(tile.x * width + width / 2, tile.y * height + height / 2);
+    tile.drawPredef();
   }
-  
-  endShape();
 }
 
-// All the A* code
-
+// All the A* winner selector
 public Tile step() {
   if (openSet.size() <= 0) {
     // No solution
