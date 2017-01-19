@@ -32,6 +32,7 @@ class Tile {
   public ArrayList<Tile> getNeighbors() {
     // Just in case
     if (neighbors == null) {
+      neighbors = new ArrayList<Tile>();
       addNeighbors();
     }
     
@@ -41,8 +42,6 @@ class Tile {
   public void addNeighbors() {
     int cols = tiles.length;
     int rows = tiles[0].length;
-    
-    neighbors = new ArrayList<Tile>();
     
     if (x < cols - 1) {
       neighbors.add(tiles[x + 1][y]);
@@ -77,6 +76,7 @@ ArrayList<Tile> openSet = new ArrayList<Tile>();
 
 public void setup() {
   size(400, 400);
+  frameRate(3);
   noStroke();
 
   tileSize = floor(width / numTiles);
@@ -87,7 +87,6 @@ public void setup() {
   for (int y = 0; y < numTiles; y++) {
     for (int x = 0; x < numTiles; x++) { 
       Tile tile = tiles[y][x] = new Tile(x, y);
-      tile.addNeighbors();
       
       if (x == 0 && y == 0) {
         start = tile;
@@ -134,14 +133,21 @@ public void draw() {
 }
 
 private void drawPath(ArrayList<Tile> path) {
-  noFill();
+  // TODO Fix this drawing algorithm
+  /*noFill();
   stroke(255, 0, 200);
-  strokeWeight(width / 2);
+  strokeWeight(width / 2);*/
+  
+  // TODO Remove debug
+  //System.out.println(path.size());
+  
   beginShape();
   
   for (Tile tile : path) {
     vertex(tile.x * width + width / 2, tile.y * height + height / 2);
   }
+  
+  endShape();
 }
 
 // All the A* code
@@ -149,6 +155,7 @@ private void drawPath(ArrayList<Tile> path) {
 public Tile step() {
   if (openSet.size() <= 0) {
     // No solution
+    System.out.println("No solution!");
     noLoop();
     return null;
   }
@@ -171,23 +178,22 @@ public Tile step() {
   closedSet.add(winner);
   
   for (Tile neighbor : winner.getNeighbors()) {
-    // TODO Fix weird NPE
-    if (neighbor == null || closedSet.contains(neighbor) || neighbor.wall) {
+    if (closedSet.contains(neighbor) || neighbor.wall) {
       continue;
     }
     
     float newG = winner.g + heuristic(neighbor, winner);
     boolean newPath = false;
     
-    if (openSet.contains(neighbor)) {
-      if (newG < neighbor.g) {
-        neighbor.g = newG;
-        newPath = true;
-      }
-    } else {
+    boolean contains = openSet.contains(neighbor);
+    
+    if (!contains || newG < neighbor.g) {
       neighbor.g = newG;
       newPath = true;
-      openSet.add(neighbor);
+      
+      if (!contains) {
+        openSet.add(neighbor);
+      }
     }
     
     if (!newPath) {
