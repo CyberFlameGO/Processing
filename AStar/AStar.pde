@@ -69,7 +69,7 @@ class Tile {
 
 // Settings
 int numTiles = 20;
-int fps = 10;
+int fps = 15;
 float wallProb = .1;
 
 int tileSize;
