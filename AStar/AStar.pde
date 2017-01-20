@@ -67,7 +67,7 @@ class Tile {
 }
 
 // Settings
-int numTiles = 40;
+int numTiles = 80;
 int fps = 90;
 float wallProb = .2;
 
@@ -82,7 +82,7 @@ ArrayList<Tile> closedSet = new ArrayList<Tile>();
 ArrayList<Tile> openSet = new ArrayList<Tile>();
 
 public void setup() {
-  size(400, 400);
+  size(600, 600);
   frameRate(fps);
   noStroke();
 
