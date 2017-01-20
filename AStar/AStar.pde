@@ -34,7 +34,6 @@ class Tile {
   }
   
   public ArrayList<Tile> getNeighbors() {
-    // Just in case
     if (neighbors == null) {
       neighbors = new ArrayList<Tile>();
       addNeighbors();
@@ -48,19 +47,19 @@ class Tile {
     int rows = tiles[0].length;
     
     if (x < cols - 1) {
-      neighbors.add(tiles[x + 1][y]);
+      neighbors.add(tiles[y][x + 1]);
     }
     
     if (x > 0) {
-      neighbors.add(tiles[x - 1][y]);
+      neighbors.add(tiles[y][x - 1]);
     }
     
     if (y < rows - 1) {
-      neighbors.add(tiles[x][y + 1]);    
+      neighbors.add(tiles[y + 1][x]);    
     }
     
     if (y > 0) {
-      neighbors.add(tiles[x][y - 1]);
+      neighbors.add(tiles[y - 1][x]);
     }
     
     // TODO Add diagonals
@@ -68,15 +67,16 @@ class Tile {
 }
 
 // Settings
-int numTiles = 20;
+int numTiles = 40;
 int fps = 15;
-float wallProb = .1;
+float wallProb = .2;
 
 int tileSize;
 Tile[][] tiles;
 
 Tile start;
 Tile end;
+Tile previous;
 
 ArrayList<Tile> closedSet = new ArrayList<Tile>();
 ArrayList<Tile> openSet = new ArrayList<Tile>();
@@ -110,8 +110,7 @@ public void setup() {
 }
 
 public void draw() {
-  //background(0);
-  Tile current = step();
+  step();
   
   for (int y = 0; y < tiles.length; y++) {
     for (int x = 0; x < tiles[y].length; x++) {
@@ -120,14 +119,13 @@ public void draw() {
     }
   }
   
-  if (current == null) {
-    // TODO Draw the closed path
+  if (previous == null) {
     return;
   }
   
   // Draw current path
   ArrayList<Tile> path = new ArrayList<Tile>();
-  Tile temp = current;
+  Tile temp = previous;
   
   path.add(temp);
   
@@ -149,12 +147,12 @@ private void drawPath(ArrayList<Tile> path) {
 }
 
 // All the A* winner selector
-public Tile step() {
+public void step() {
   if (openSet.size() <= 0) {
     // No solution
     System.out.println("No solution!");
     noLoop();
-    return null;
+    return;
   }
   
   // Keep going if openSet is empty
@@ -168,11 +166,15 @@ public Tile step() {
   
   if (winner.equals(end)) {
     noLoop();
-    return null;
+    return;
   }
   
   openSet.remove(winner);
   closedSet.add(winner);
+  
+  if (winner.getNeighbors().size() > 4) {
+    System.out.println("Too many neighbors! x: " + winner.x + " y: " + winner.y);
+  }
   
   for (Tile neighbor : winner.getNeighbors()) {
     if (closedSet.contains(neighbor) || neighbor.wall) {
@@ -203,10 +205,12 @@ public Tile step() {
     neighbor.previous = winner;
   }
   
-  return winner;
+  previous = winner;
 }
 
 // TODO Add diagonal support
 private float heuristic(Tile a, Tile b) {
-  return dist(a.x, a.y, b.x, b.y);
+  return abs(a.x - b.x) + abs(b.x - b.x);
+  
+  //return dist(a.x, a.y, b.x, b.y);
 }
