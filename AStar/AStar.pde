@@ -68,7 +68,7 @@ class Tile {
 
 // Settings
 int numTiles = 40;
-int fps = 15;
+int fps = 90;
 float wallProb = .2;
 
 int tileSize;
@@ -172,10 +172,6 @@ public void step() {
   openSet.remove(winner);
   closedSet.add(winner);
   
-  if (winner.getNeighbors().size() > 4) {
-    System.out.println("Too many neighbors! x: " + winner.x + " y: " + winner.y);
-  }
-  
   for (Tile neighbor : winner.getNeighbors()) {
     if (closedSet.contains(neighbor) || neighbor.wall) {
       continue;
@@ -210,7 +206,6 @@ public void step() {
 
 // TODO Add diagonal support
 private float heuristic(Tile a, Tile b) {
-  return abs(a.x - b.x) + abs(b.x - b.x);
-  
   //return dist(a.x, a.y, b.x, b.y);
+  return abs(a.x - b.x) + abs(b.x - b.x);
 }
